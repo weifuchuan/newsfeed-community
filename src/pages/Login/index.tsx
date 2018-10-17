@@ -2,12 +2,14 @@ import * as React from 'react';
 import { observer, inject } from 'mobx-react';
 import { Store } from '@/store';
 import bgimg from '@/assets/image/login-reg-backgroud';
-import { Form, Input,  Button, Icon, message } from 'antd';
+import { Form, Input, Button, Icon, message } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
-import './index.less'; 
+import './index.less';
 import md5 from 'js-md5';
 
 import { Control } from 'react-keeper';
+import Account from '@/models/Account';
+import { toJS } from 'mobx';
 
 interface LoginProps {
 	store?: Store;
@@ -44,9 +46,15 @@ export default class Login extends React.Component<LoginProps> {
 
 	private readonly onLogin = async ({ loginer, password }: { loginer: string; password: string }) => {
 		try {
-			// const user = await login(loginer, md5(password.trim()));
-			// this.props.store!.setMe(user);
-			Control.go('/');
+			const ret = await Account.login(loginer, password);
+			if (ret.isOk) {
+				const account = ret.get('account');
+				console.log(toJS(account));
+				this.props.store!.me = account;
+				Control.go('/');
+			} else {
+				message.error(ret.get('msg'), 3);
+			}
 		} catch (e) {
 			message.error(e.toString());
 		}

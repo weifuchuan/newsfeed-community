@@ -1,5 +1,6 @@
 import { observable } from 'mobx';
-import {  POST_FORM } from '@/kit/req';
+import { POST_FORM } from '@/kit/req';
+import Ret, { IRet } from './Ret';
 
 export interface IAccount {
 	id: number;
@@ -22,7 +23,12 @@ export default class Account implements IAccount {
 		return acc;
 	}
 
-	static async login(username: string, password: string): Promise<Account> {
-		return Account.from((await POST_FORM<IAccount>('/login', { username, password })).data);
+	static async login(username: string, password: string): Promise<Ret> {
+		const ret = (await POST_FORM<IRet>('/login', { username, password })).data;
+		if (ret.state === 'ok') {
+			return Ret.ok().set('account', Account.from(ret.account));
+		} else {
+			return Ret.fail().set('msg', ret.msg);
+		}
 	}
 }
