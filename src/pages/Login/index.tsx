@@ -5,8 +5,6 @@ import bgimg from '@/assets/image/login-reg-backgroud';
 import { Form, Input, Button, Icon, message } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import './index.less';
-import md5 from 'js-md5';
-
 import { Control } from 'react-keeper';
 import Account from '@/models/Account';
 import { toJS } from 'mobx';

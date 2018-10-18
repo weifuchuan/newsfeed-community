@@ -10,10 +10,10 @@ export interface IAccount {
 }
 
 export default class Account implements IAccount {
-	@observable id: number;
-	@observable username: string;
+	@observable id: number = 0;
+	@observable username: string = '';
 	@observable password?: string | undefined;
-	@observable avatar: string;
+	@observable avatar: string= '';
 
 	static from(account: IAccount): Account {
 		const acc = new Account();

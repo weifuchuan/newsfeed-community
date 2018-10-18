@@ -1,5 +1,6 @@
 import qs from 'qs';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'; 
+import baseUrl from './baseUrl'
 
 export async function GET<Result = any>(
 	uri: string,
@@ -7,7 +8,7 @@ export async function GET<Result = any>(
 	config?: AxiosRequestConfig
 ): Promise<AxiosResponse<Result>> {
 	uri = params ? uri + '?' + qs.stringify(params) : uri;
-	return await axios.get(`${uri}`, config);
+	return await axios.get(`${baseUrl}${uri}`, config);
 }
 
 export async function GET_HTML(uri: string, params?: any): Promise<string> {
@@ -22,7 +23,7 @@ export async function POST<Result = any>(
 	data?: any,
 	config?: AxiosRequestConfig
 ): Promise<AxiosResponse<Result>> {
-	return await axios.post(`${uri}`, data, config);
+	return await axios.post(`${baseUrl}${uri}`, data, config);
 }
 
 export async function POST_FORM<Result = any>(
