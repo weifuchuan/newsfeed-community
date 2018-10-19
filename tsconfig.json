@@ -2,6 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+			"*": ["types/*"],
       "@/*": ["src/*"]
     },
     "outDir": "build/dist",
@@ -27,6 +28,7 @@
   },
   "exclude": [
     "node_modules",
+    "build"
   ],
   "module": "ESNext"
 }

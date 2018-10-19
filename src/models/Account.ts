@@ -31,4 +31,13 @@ export default class Account implements IAccount {
 			return Ret.fail().set('msg', ret.msg);
 		}
 	}
+
+	static async reg(username: string, password: string): Promise<Ret> {
+		const ret = (await POST_FORM<IRet>('/reg', { username, password })).data;
+		if (ret.state === 'ok') {
+			return Ret.ok().set('account', Account.from(ret.account));
+		} else {
+			return Ret.fail().set('msg', ret.msg);
+		}
+	}
 }

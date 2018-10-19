@@ -6,22 +6,23 @@ html,
 body,
 #root {
   height: 100%;
-  width: 100%; 
+  width: 100%;
 }
 
-.flex{
-  display: flex; 
-  flex-direction: column; 
+.flex {
+  display: flex;
+  flex-direction: column;
 }
 
-#root{
-  display: flex; 
+#root {
+  display: flex;
 }
 
 html {
   color: #000;
   background: #FFF;
 }
+ 
 
 body,
 div,
@@ -101,4 +102,4 @@ q:after {
 abbr,
 acronym {
   border: 0;
-} 
+}

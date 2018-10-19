@@ -46,8 +46,7 @@ export default class Login extends React.Component<LoginProps> {
 		try {
 			const ret = await Account.login(loginer, password);
 			if (ret.isOk) {
-				const account = ret.get('account');
-				console.log(toJS(account));
+				const account = ret.get('account'); 
 				this.props.store!.me = account;
 				Control.go('/');
 			} else {
@@ -100,14 +99,11 @@ class _LoginForm extends React.Component<
 						/>
 					)}
 				</FormItem>
-				<FormItem>
-					{/* <a className="login-form-forgot" onClick={() => Control.go('/forget-password')}>
-						忘记密码
-					</a> */}
+				<FormItem> 
 					<Button type="primary" htmlType="submit" className="login-form-button">
 						登录
 					</Button>
-					Or <a onClick={() => Control.go('/sign-up')}>立即注册</a>
+					Or <a onClick={() => Control.go('/reg')}>立即注册</a>
 				</FormItem>
 			</Form>
 		);

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import './App.scss';
-import { HashRouter, Route, Filter } from 'react-keeper';
+import { HashRouter, Route, Filter, Control } from 'react-keeper';
 import { Spin, message } from 'antd';
 import { inject, observer } from 'mobx-react';
 import { observable } from 'mobx';
@@ -39,7 +39,7 @@ class App extends React.Component<{ store?: Store }> {
 					/>
 					<Route
 						path={'/reg>'}
-						loadComponent={(cb) => import('@/pages/Reg').then((C) => cb(C.default))}
+						loadComponent={(cb) => import('@/pages/Reg/index').then((C) => cb(C.default))}
 						enterFilter={[ this.unloggedFilter ]}
 					/>
 					<Route
@@ -50,6 +50,11 @@ class App extends React.Component<{ store?: Store }> {
 					<Route
 						path={'/user>'}
 						loadComponent={(cb) => import('@/pages/User').then((C) => cb(C.default))}
+						enterFilter={[ this.loggedFilter ]}
+					/>
+					<Route
+						path={'/message>'}
+						loadComponent={(cb) => import('@/pages/Message').then((C) => cb(C.default))}
 						enterFilter={[ this.loggedFilter ]}
 					/>
 					<Route miss loadComponent={(cb) => import('@/pages/C404').then((C) => cb(C.default))} />
@@ -82,26 +87,32 @@ class App extends React.Component<{ store?: Store }> {
 		})();
 	}
 
+	// 未登录者通过
 	private readonly unloggedFilter: Filter = async (cb, props) => {
 		repeat(() => {
 			if (this.isLogged === 0) {
 				return false;
 			} else {
-				if (this.isLogged === 2) {
+				if (this.isLogged === 2 && !this.props.store!.me) {
 					cb();
+				} else {
+					Control.go('/');
 				}
 				return true;
 			}
 		}, 100);
 	};
 
+	// 已登录者通过
 	private readonly loggedFilter: Filter = async (cb, props) => {
 		repeat(() => {
 			if (this.isLogged === 0) {
 				return false;
 			} else {
-				if (this.isLogged === 1) {
+				if (this.isLogged === 1 || this.props.store!.me) {
 					cb();
+				} else {
+					Control.go('/login');
 				}
 				return true;
 			}
