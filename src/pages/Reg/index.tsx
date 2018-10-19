@@ -6,11 +6,10 @@ import { Form, Input, Button, Icon, message } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import './index.less';
 import { Control } from 'react-keeper';
-import Account from '@/models/Account';
-import { toJS } from 'mobx';
+import Account from '@/models/Account'; 
 
 interface Props {
-	store?: Store;
+	store: Store;
 }
 
 @inject('store')
@@ -47,8 +46,8 @@ export default class Reg extends React.Component<Props> {
 			const ret = await Account.reg(loginer, password);
 			if (ret.isOk) {
 				const account = ret.get('account');
-				this.props.store!.me = account;
-				Control.go('/');
+				this.props.store.me = account;
+				Control.go(Control.state.backUri ? Control.state.backUri : '/');
 			} else {
 				message.error(ret.get('msg'), 3);
 			}
@@ -99,11 +98,11 @@ class _RegForm extends React.Component<
 						/>
 					)}
 				</FormItem>
-				<FormItem> 
+				<FormItem>
 					<Button type="primary" htmlType="submit" className="login-form-button">
 						注册
 					</Button>
-					Or <a onClick={() => Control.go('/reg')}>立即登录</a>
+					Or <a onClick={() => Control.go('/reg', Control.state)}>立即登录</a>
 				</FormItem>
 			</Form>
 		);

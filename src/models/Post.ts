@@ -1,5 +1,6 @@
-import { observable } from 'mobx';
-import { POST_FORM } from '@/kit/req';
+import { observable, runInAction } from 'mobx';
+import { POST_FORM, POST } from '@/kit/req';
+import Ret, { IRet } from './Ret';
 
 export interface IPost {
 	id: number;
@@ -9,16 +10,84 @@ export interface IPost {
 	modifyAt?: number;
 	likeCount: number;
 	nayCount: number;
+
+	accountId: number;
+	username: string;
+	avatar: string;
+
+	like?: boolean;
+	nay?: boolean;
 }
 
 export default class Post implements IPost {
-	@observable id: number=0;
-	@observable title: string= '';
-	@observable content: string= '';
-	@observable createAt: number= 0;
+	@observable id: number = 0;
+	@observable title: string = '';
+	@observable content: string = '';
+	@observable createAt: number = 0;
 	@observable modifyAt?: number | undefined;
-	@observable likeCount: number= 0;
-	@observable nayCount: number= 0;
+	@observable likeCount: number = 0;
+	@observable nayCount: number = 0;
+	@observable accountId: number = 0;
+	@observable username: string = '';
+	@observable avatar: string = '';
+	@observable like?: boolean;
+	@observable nay?: boolean;
+
+	async ILike(): Promise<Ret> {
+		let ret: IRet;
+		try {
+			ret = (await POST_FORM('/post/like', { postId: this.id })).data;
+		} catch (e) {
+			console.error(e);
+			ret = { state: 'fail', msg: e.toString() };
+		}
+		if (ret.state === 'ok') {
+			runInAction(() => {
+				if (this.like) {
+					this.like = false;
+					this.likeCount--;
+				} else {
+					this.like = true;
+					this.likeCount++;
+					if (this.nay) {
+						this.nayCount--;
+						this.nay = false;
+					}
+				}
+			});
+			return Ret.ok();
+		} else {
+			return Ret.fail().set('msg', ret.msg);
+		}
+	}
+
+	async INay(): Promise<Ret> {
+		let ret: IRet;
+		try {
+			ret = (await POST_FORM('/post/nay', { postId: this.id })).data;
+		} catch (e) {
+			console.error(e);
+			ret = { state: 'fail', msg: e.toString() };
+		}
+		if (ret.state === 'ok') {
+			runInAction(() => {
+				if (this.nay) {
+					this.nay = false;
+					this.nayCount--;
+				} else {
+					this.nay = true;
+					this.nayCount++;
+					if (this.like) {
+						this.likeCount--;
+						this.like = false;
+					}
+				}
+			});
+			return Ret.ok();
+		} else {
+			return Ret.fail().set('msg', ret.msg);
+		}
+	}
 
 	static from(post: IPost): Post {
 		const p = new Post();
@@ -44,5 +113,13 @@ export default class Post implements IPost {
 			totalPage: resp.data.totalPage
 		};
 	}
+
+	static async add(title: string, content: string): Promise<Ret> {
+		const ret: IRet = (await POST_FORM('/post/add', { title, content })).data;
+		if (ret.state === 'ok') {
+			return Ret.ok();
+		} else {
+			return Ret.fail().set('msg', ret.msg);
+		}
+	}
 }
- 

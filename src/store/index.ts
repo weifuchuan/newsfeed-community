@@ -4,9 +4,8 @@ import Post from '@/models/Post';
 import EventEmitter from "wolfy87-eventemitter"
 
 export class Store extends EventEmitter {
-	@observable me?: Account;
-	@observable accounts: Account[] = [];
-	@observable posts: Post[] = [];
+	@observable me?: Account; 
+	
 }
 
 const store = new Store(); 

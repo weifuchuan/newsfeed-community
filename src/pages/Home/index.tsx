@@ -6,60 +6,112 @@ import { observable, runInAction } from 'mobx';
 import { inject, observer } from 'mobx-react';
 import React from 'react';
 import './index.scss';
-import { Avatar, Button, Popover } from 'antd';
-import { Control } from 'react-keeper';
-import {List} from 'react-virtualized'
+import { Avatar, Button, Popover, Icon, Pagination, Spin } from 'antd';
+import { Control, Link } from 'react-keeper';
+import moment from 'moment';
+import CommonLayout from '@/layouts/CommonLayout';
+
+moment.locale('zh-cn');
 
 interface Props {
-	store?: Store;
+	store: Store;
 }
 
 @inject('store')
 @observer
 export default class Home extends React.Component<Props> {
-	@observable pageNumber = 0;
-	@observable totalPage = 0;
+	@observable posts: Post[] = [];
+	@observable pageNumber = 1;
+	@observable totalPage = 1;
+	@observable loading = false;
+	container: HTMLDivElement | null = null;
 
 	render() {
 		return (
-			<div className="HomeContainer">
-				<div>
-					<div className={'navbar'}>
-						<div>
-							<span>随便写的社区</span>
-						</div>
-						<div>
-							<Popover
-								placement="bottomRight"
-								content={
-									<div className={'my-operations'}>
-										<div onClick={() => Control.go('/my')}>
-											<span>我的主页</span>
+			<CommonLayout>
+				<div className={'posts'}>
+					{this.posts.map((post) => {
+						return (
+							<div className="post" key={post.id}>
+								<div>
+									<div className="avatar" onClick={() => Control.go(`/user/${post.accountId}`)}>
+										<Avatar src={post.avatar} shape="square" size="large" />
+									</div>
+									<div>
+										<div onClick={() => Control.go(`/post/${post.id}`, { post })}>
+											<span>{post.title}</span>
 										</div>
-										<div onClick={() => Control.go('/message')}>
-											<span>我的私信</span>
-										</div>
-										<div onClick={this.logout}>
-											<span>退出登录</span>
+										<div>
+											<Link to={`/user/${post.accountId}`}>{post.username}</Link>
+											<span>{moment(post.createAt).fromNow()}</span>
 										</div>
 									</div>
-								}
-								trigger="click"
-							>
-								<Avatar
-									className={'avatar'}
-									shape="square"
-									size="large"
-									src={this.props.store!.me!.avatar}
-								/>
-							</Popover>
-						</div>
-					</div>
-					<div className={"posts"} >
-						
-					</div>
+								</div>
+								<div>
+									<div dangerouslySetInnerHTML={{ __html: post.content }} />
+									<div onClick={() => Control.go(`/post/${post.id}`, { post })} />
+								</div>
+								<div>
+									<div>
+										<Icon
+											type="caret-up"
+											style={{
+												marginBottom: '-0.2em',
+												cursor: 'pointer',
+												...post.like ? { color: 'blue' } : {}
+											}}
+											onClick={() => post.ILike()}
+										/>
+										<span>{post.likeCount - post.nayCount}</span>
+										<Icon
+											type="caret-down"
+											style={{ cursor: 'pointer', ...post.nay ? { color: 'red' } : {} }}
+											onClick={() => post.INay()}
+										/>
+									</div>
+									<div>
+										<Button
+											onClick={() =>
+												Control.go(`/post/${post.id}`, { post, toCommentList: true })}
+										>
+											评论
+										</Button>
+									</div>
+								</div>
+							</div>
+						);
+					})}
 				</div>
-			</div>
+				<Pagination
+					showQuickJumper
+					current={this.pageNumber}
+					pageSize={1}
+					total={this.totalPage}
+					onChange={this.toPage}
+				/>
+				<div className={'operationBtns'}>
+					<Button
+						type="primary"
+						shape="circle"
+						icon="plus"
+						size={'large'}
+						onClick={() => Control.go('/edit-post/add')}
+					/>
+					<Button
+						type="primary"
+						shape="circle"
+						icon="reload"
+						size={'large'}
+						onClick={() => this.toPage(1)}
+						style={{ marginTop: '1em' }}
+					/>
+				</div>
+				<Spin
+					spinning={this.loading}
+					size={'large'}
+					style={{ position: 'fixed', top: '50vh', left: '50vw', zIndex: 1000 }}
+				/>
+			</CommonLayout>
 		);
 	}
 
@@ -68,16 +120,25 @@ export default class Home extends React.Component<Props> {
 	}
 
 	private readonly fetchInitDataFromServer = async () => {
+		this.loading = true;
 		const ret = await retryDo(async () => (await POST('/home')).data, 3);
 		runInAction(() => {
-			this.props.store!.posts = observable(ret.posts.map(Post.from));
+			this.posts = observable(ret.posts.map(Post.from));
 			this.pageNumber = ret.pageNumber;
 			this.totalPage = ret.totalPage;
+			this.loading = false;
 		});
 	};
 
-	logout = async () => {
-		await GET('/logout');
-		window.location.reload(); 
-	};
+	toPage = async (pageNumber: number) => {
+		this.loading = true;
+		const ret = await Post.getPostsByPaginate(pageNumber);
+		runInAction(() => {
+			this.posts = observable(ret.posts);
+			this.totalPage = ret.totalPage;
+			this.pageNumber = ret.pageNumber;
+			this.loading = false;
+		});
+		this.container && this.container.scrollTo({ top: 0 });
+	}; 
 }

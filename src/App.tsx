@@ -29,6 +29,7 @@ class App extends React.Component<{ store?: Store }> {
 					/>
 					<Route
 						path={'/>'}
+						cache 
 						loadComponent={(cb) => import('@/pages/Home').then((C) => cb(C.default))}
 						enterFilter={[ this.loggedFilter ]}
 					/>
@@ -43,12 +44,22 @@ class App extends React.Component<{ store?: Store }> {
 						enterFilter={[ this.unloggedFilter ]}
 					/>
 					<Route
+						path={'/post/:id>'}
+						loadComponent={(cb) => import('@/pages/Post').then((C) => cb(C.default))}
+						enterFilter={[ this.loggedFilter ]}
+					/>
+					<Route
+						path={'/edit-post/:action>'}
+						loadComponent={(cb) => import('@/pages/EditPost').then((C) => cb(C.default))}
+						enterFilter={[ this.loggedFilter ]}
+					/>
+					<Route
 						path={'/my>'}
 						loadComponent={(cb) => import('@/pages/My').then((C) => cb(C.default))}
 						enterFilter={[ this.loggedFilter ]}
 					/>
 					<Route
-						path={'/user>'}
+						path={'/user/:id>'}
 						loadComponent={(cb) => import('@/pages/User').then((C) => cb(C.default))}
 						enterFilter={[ this.loggedFilter ]}
 					/>
@@ -105,6 +116,14 @@ class App extends React.Component<{ store?: Store }> {
 
 	// 已登录者通过
 	private readonly loggedFilter: Filter = async (cb, props) => {
+		const i = window.location.href.indexOf('#');
+		let backUri: string | undefined;
+		if (i !== -1) {
+			backUri = window.location.href.substring(i + 1);
+			if (backUri.startsWith('/login') || backUri.startsWith('/reg')) {
+				backUri = undefined;
+			}
+		}
 		repeat(() => {
 			if (this.isLogged === 0) {
 				return false;
@@ -112,7 +131,7 @@ class App extends React.Component<{ store?: Store }> {
 				if (this.isLogged === 1 || this.props.store!.me) {
 					cb();
 				} else {
-					Control.go('/login');
+					Control.go('/login', {backUri});
 				}
 				return true;
 			}

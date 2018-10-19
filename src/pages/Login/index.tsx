@@ -10,7 +10,7 @@ import Account from '@/models/Account';
 import { toJS } from 'mobx';
 
 interface LoginProps {
-	store?: Store;
+	store: Store;
 }
 
 @inject('store')
@@ -46,9 +46,9 @@ export default class Login extends React.Component<LoginProps> {
 		try {
 			const ret = await Account.login(loginer, password);
 			if (ret.isOk) {
-				const account = ret.get('account'); 
-				this.props.store!.me = account;
-				Control.go('/');
+				const account = ret.get('account');
+				this.props.store.me = account;
+				Control.go(Control.state.backUri ? Control.state.backUri : '/');
 			} else {
 				message.error(ret.get('msg'), 3);
 			}
@@ -99,11 +99,11 @@ class _LoginForm extends React.Component<
 						/>
 					)}
 				</FormItem>
-				<FormItem> 
+				<FormItem>
 					<Button type="primary" htmlType="submit" className="login-form-button">
 						登录
 					</Button>
-					Or <a onClick={() => Control.go('/reg')}>立即注册</a>
+					Or <a onClick={() => Control.go('/reg', Control.state)}>立即注册</a>
 				</FormItem>
 			</Form>
 		);

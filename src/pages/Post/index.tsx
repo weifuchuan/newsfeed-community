@@ -5,17 +5,17 @@ import { Store } from '@/store';
 
 interface Props {
   store: Store; 
-  params:{
+  params: {
     id: string;
   };
 }
 
 @inject("store")
 @observer
-export default class User extends React.Component<Props> {
-  render(){ 
+export default class Post extends React.Component<Props> {
+  render(){
     return (
-      <div className="UserContainer" >
+      <div className="PostContainer" >
       
       </div>
     )

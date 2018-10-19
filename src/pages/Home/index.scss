@@ -1,67 +1,94 @@
-.HomeContainer {
-  width: 100%;
-  height: 100%;
-  background-color: #EAEAEF;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.posts {
+  .post {
+    display: flex;
+    flex-direction: column;
+    padding: 1em;
+    box-shadow: 0px 0px 0.5em #535353;
+    background-color: #fff;
+    border-radius: 0.5em;
+    padding: 1em;
+    margin: 0 0 1em;
 
-  >div:first-child {
-    height: 100%;
-    padding: 0.5em;
-
-    @media (max-width: 640px) {
-      width: 100%;
+    .avatar {
+      cursor: pointer;
     }
 
-    @media (min-width: 641px) and (max-width: 1024px) {
-      width: 80%;
+    // 头像 标题
+    >div:nth-child(1) {
+      display: flex;
+
+      // 标题
+      >div:nth-child(2) {
+        margin-left: 1em;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+
+        >div:nth-child(1) {
+          cursor: pointer;
+
+          >span {
+            font-size: 1.2em;
+            font-weight: bold;
+          }
+        }
+
+        >div:nth-child(1):hover {
+          background-color: #EAEAEF;
+        }
+
+        >div:nth-child(2) {
+          display: flex;
+          justify-content: space-between;
+          color: rgb(54, 54, 54);
+        }
+      }
     }
 
-    @media (min-width: 1025px) {
-      width: 60%;
+    // 内容
+    >div:nth-child(2) {
+      max-height: 16em;
+      position: relative;
+      overflow: hidden;
+
+      // 覆盖
+      >div:nth-child(2) {
+        position: absolute;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.822));
+        cursor: pointer;
+      }
     }
 
-    .navbar {
-      box-shadow: 0px 0px 0.5em #535353;
+    >div:nth-child(3) {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      background-color: #fff;
-      border-radius: 0.5em;
-      padding: 1em;
-      margin: 1em 0 1em;
 
-      >div:first-child {
-        >span {
-          font-size: 1.5em;
-          font-weight: bold;
-        }
-      }
-
-      >div:nth-child(2) {
+      >div:nth-child(1) {
         display: flex;
+        align-items: center;
 
-        .avatar {
-          cursor: pointer;
+        i {
+          font-size: 1.5em;
         }
 
+        >span {
+          margin: 0 0.5em;
+        }
       }
-    }
-
-    .posts{
-      
     }
   }
 }
 
-.my-operations {
-  >div { 
-    padding: 0.5em; 
-    cursor: pointer;
-  }
-  >div:hover {
-    background-color: #EAEAEF;
-  }
-
+.operationBtns {
+  position: fixed;
+  right: 2em;
+  bottom: 2em;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
 }

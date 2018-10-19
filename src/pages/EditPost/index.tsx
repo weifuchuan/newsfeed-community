@@ -6,17 +6,19 @@ import { Store } from '@/store';
 interface Props {
   store: Store; 
   params:{
-    id: string;
+    action:"add"|"edit"; 
   };
 }
 
 @inject("store")
 @observer
-export default class User extends React.Component<Props> {
-  render(){ 
+export default class EditPost extends React.Component<Props> {
+  render(){
     return (
-      <div className="UserContainer" >
-      
+      <div className="EditPostContainer" >
+        <div>
+          
+        </div>
       </div>
     )
   }
