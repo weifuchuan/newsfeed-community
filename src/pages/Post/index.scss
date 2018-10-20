@@ -1,4 +1,127 @@
-.PostContainer{
+.post {
+  display: flex;
+  flex-direction: column;
+  padding: 1em;
+  box-shadow: 0px 0px 0.5em #535353;
+  background-color: #fff;
+  border-radius: 0.5em;
+  padding: 1em;
+  margin: 0 0 1em;
 
+  .avatar {
+    cursor: pointer;
+  }
+
+  // 头像 标题
+  >div:nth-child(1) {
+    display: flex;
+
+    // 标题
+    >div:nth-child(2) {
+      margin-left: 1em;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+
+      >div:nth-child(1) {
+        cursor: pointer;
+
+        >span {
+          font-size: 1.2em;
+          font-weight: bold;
+        }
+      }
+
+      >div:nth-child(1):hover {
+        background-color: #EAEAEF;
+      }
+
+      >div:nth-child(2) {
+        display: flex;
+        justify-content: space-between;
+        color: rgb(54, 54, 54);
+      }
+    }
+  }
+
+  // 内容
+  >div:nth-child(2) { 
+    border-top: #b1abab solid 1px; 
+    border-bottom: #b1abab solid 1px; 
+    margin:1em 0; 
+    padding:1em 0; 
+  }
+
+  >div:nth-child(3) {
+    display: flex;
+    justify-content: space-between;
+
+    >div:nth-child(1) {
+      display: flex;
+      align-items: center;
+
+      i {
+        font-size: 1.5em;
+      }
+
+      >span {
+        margin: 0 0.5em;
+      }
+    }
+  }
 }
-  
+
+.comments{
+  display: flex;
+  flex-direction: column;
+  padding: 1em;
+  box-shadow: 0px 0px 0.5em #535353;
+  background-color: #fff;
+  border-radius: 0.5em;
+  padding: 1em;
+  margin: 0 0 1em;
+ 
+}
+
+.comment-editor{
+  display: flex;  
+}
+
+.comment{
+  border-left: #b1abab solid 1px;
+  padding-left: 1em;
+  display: flex;
+  flex-direction: column; 
+  margin-top: 1em; 
+
+  >div:nth-child(1){
+    display: flex;
+    align-items: center; 
+    cursor: pointer;     
+
+    :nth-child(2){
+      margin-left: 0.5em;
+    }
+  }
+
+  >div:nth-child(1):hover{
+    background-color: #EAEAEF; 
+  }
+
+  >div:nth-child(2){
+    padding:0.5em 0; 
+  }
+
+  >div:nth-child(3){
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+
+    button{
+      border: 1px solid #aaa;
+      background-color: #fff;
+      font-size: 0.5em;
+      cursor: pointer;
+    }
+  }
+}

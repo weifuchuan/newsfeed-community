@@ -1,6 +1,7 @@
 import { observable, runInAction } from 'mobx';
 import { POST_FORM, POST } from '@/kit/req';
 import Ret, { IRet } from './Ret';
+import Comment, { IComment } from './Comment';
 
 export interface IPost {
 	id: number;
@@ -32,6 +33,8 @@ export default class Post implements IPost {
 	@observable avatar: string = '';
 	@observable like?: boolean;
 	@observable nay?: boolean;
+
+	@observable comments: Comment[] = [];
 
 	async ILike(): Promise<Ret> {
 		let ret: IRet;
@@ -89,6 +92,15 @@ export default class Post implements IPost {
 		}
 	}
 
+	async fetchComments() {
+		const ret: IRet = (await POST_FORM('/post/getComments', { id: this.id })).data;
+		if (ret.state === 'ok') {
+			const comments: IComment[] = ret.comments;
+			comments.sort((a, b) => (a.createAt < b.createAt ? -1 : a.createAt === b.createAt ? 0 : 1));
+			this.comments = Comment.resolve(comments);
+		}
+	}
+
 	static from(post: IPost): Post {
 		const p = new Post();
 		for (let k in post) {
@@ -118,6 +130,20 @@ export default class Post implements IPost {
 		const ret: IRet = (await POST_FORM('/post/add', { title, content })).data;
 		if (ret.state === 'ok') {
 			return Ret.ok();
+		} else {
+			return Ret.fail().set('msg', ret.msg);
+		}
+	}
+
+	static async getPost(id: number): Promise<Ret> {
+		const ret: IRet = (await POST_FORM('/post/get', { id })).data;
+		if (ret.state === 'ok') {
+			const comments: IComment[] = ret.comments;
+			delete ret.comments;
+			const post = Post.from(ret.post);
+			comments.sort((a, b) => (a.createAt < b.createAt ? -1 : a.createAt === b.createAt ? 0 : 1));
+			post.comments = Comment.resolve(comments);
+			return Ret.ok().set('post', post);
 		} else {
 			return Ret.fail().set('msg', ret.msg);
 		}

@@ -717,12 +717,28 @@
     "@types/connect" "*"
     "@types/node" "*"
 
+"@types/braft-editor@^1.9.1":
+  version "1.9.1"
+  resolved "http://registry.npm.taobao.org/@types/braft-editor/download/@types/braft-editor-1.9.1.tgz#0d42706fa3f549342ae45d9dc3fad6a3c6af3f34"
+  integrity sha1-DUJwb6P1STQq5F2dw/rWo8avPzQ=
+  dependencies:
+    "@types/draft-js" "*"
+    "@types/react" "*"
+
 "@types/connect@*":
   version "3.4.32"
   resolved "http://registry.npm.taobao.org/@types/connect/download/@types/connect-3.4.32.tgz#aa0e9616b9435ccad02bc52b5b454ffc2c70ba28"
   integrity sha1-qg6WFrlDXMrQK8UrW0VP/Cxwuig=
   dependencies:
     "@types/node" "*"
+
+"@types/draft-js@*":
+  version "0.10.25"
+  resolved "http://registry.npm.taobao.org/@types/draft-js/download/@types/draft-js-0.10.25.tgz#4f741ea8b7f008c3c0a06ff6b2c4427f380dc331"
+  integrity sha1-T3QeqLfwCMPAoG/2ssRCfzgNwzE=
+  dependencies:
+    "@types/react" "*"
+    immutable "^3.8.1"
 
 "@types/events@*":
   version "1.2.0"
@@ -1806,6 +1822,39 @@ braces@^2.3.0, braces@^2.3.1:
     snapdragon-node "^2.0.1"
     split-string "^3.0.2"
     to-regex "^3.0.1"
+
+braft-convert@^2.1.4:
+  version "2.1.5"
+  resolved "http://registry.npm.taobao.org/braft-convert/download/braft-convert-2.1.5.tgz#7a9bb40556319d679033587406e906f6ae437a16"
+  integrity sha1-epu0BVYxnWeQM1h0BukG9q5DehY=
+  dependencies:
+    draft-convert "^2.0.0"
+    draft-js "^0.10.3"
+
+braft-editor@^2.1.18:
+  version "2.1.18"
+  resolved "http://registry.npm.taobao.org/braft-editor/download/braft-editor-2.1.18.tgz#3a3edf1d1078d3b7c3949a172e806197b2820201"
+  integrity sha1-Oj7fHRB407fDlJoXLoBhl7KCAgE=
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+    braft-convert "^2.1.4"
+    braft-finder "^0.0.12"
+    braft-utils "^3.0.4"
+    draft-convert "^2.0.0"
+    draft-js "^0.10.3"
+    draft-js-multidecorators "^1.0.0"
+    draftjs-utils "^0.9.4"
+    immutable "~3.7.4"
+
+braft-finder@^0.0.12:
+  version "0.0.12"
+  resolved "http://registry.npm.taobao.org/braft-finder/download/braft-finder-0.0.12.tgz#d8b3164db0e62cf21ba9a0b53242536bfe5f5c6d"
+  integrity sha1-2LMWTbDmLPIbqaC1MkJTa/5fXG0=
+
+braft-utils@^3.0.4:
+  version "3.0.4"
+  resolved "http://registry.npm.taobao.org/braft-utils/download/braft-utils-3.0.4.tgz#dd3d00b8fb4c5e6548a80cbd08389bcc40361756"
+  integrity sha1-3T0AuPtMXmVIqAy9CDibzEA2F1Y=
 
 brorand@^1.0.1:
   version "1.1.0"
@@ -3177,7 +3226,22 @@ dot-prop@^4.1.1:
   dependencies:
     is-obj "^1.0.0"
 
-draft-js@^0.10.0, draft-js@~0.10.0:
+draft-convert@^2.0.0:
+  version "2.1.4"
+  resolved "http://registry.npm.taobao.org/draft-convert/download/draft-convert-2.1.4.tgz#b8817000eaf251e95583c987adda085d67254a0d"
+  integrity sha1-uIFwAOryUelVg8mHrdoIXWclSg0=
+  dependencies:
+    immutable "~3.7.4"
+    invariant "^2.2.1"
+
+draft-js-multidecorators@^1.0.0:
+  version "1.0.0"
+  resolved "http://registry.npm.taobao.org/draft-js-multidecorators/download/draft-js-multidecorators-1.0.0.tgz#6c4be8d7b78dd2b966ee51ee6cc179b9b535e612"
+  integrity sha1-bEvo17eN0rlm7lHubMF5ubU15hI=
+  dependencies:
+    immutable "*"
+
+draft-js@^0.10.0, draft-js@^0.10.3, draft-js@~0.10.0:
   version "0.10.5"
   resolved "http://registry.npm.taobao.org/draft-js/download/draft-js-0.10.5.tgz#bfa9beb018fe0533dbb08d6675c371a6b08fa742"
   integrity sha1-v6m+sBj+BTPbsI1mdcNxprCPp0I=
@@ -3185,6 +3249,11 @@ draft-js@^0.10.0, draft-js@~0.10.0:
     fbjs "^0.8.15"
     immutable "~3.7.4"
     object-assign "^4.1.0"
+
+draftjs-utils@^0.9.4:
+  version "0.9.4"
+  resolved "http://registry.npm.taobao.org/draftjs-utils/download/draftjs-utils-0.9.4.tgz#976c61aa133dbbbfedd65ae1dd6627d7b98c6f08"
+  integrity sha1-l2xhqhM9u7/t1lrh3WYn17mMbwg=
 
 duplexer@^0.1.1:
   version "0.1.1"
@@ -4476,7 +4545,7 @@ image-size@~0.5.0:
   resolved "http://registry.npm.taobao.org/image-size/download/image-size-0.5.5.tgz#09dfd4ab9d20e29eb1c3e80b8990378df9e3cb9c"
   integrity sha1-Cd/Uq50g4p6xw+gLiZA3jfnjy5w=
 
-immutable@^3.7.4:
+immutable@*, immutable@^3.7.4, immutable@^3.8.1:
   version "3.8.2"
   resolved "http://registry.npm.taobao.org/immutable/download/immutable-3.8.2.tgz#c2439951455bb39913daf281376f1530e104adf3"
   integrity sha1-wkOZUUVbs5kT2vKBN28VMOEErfM=

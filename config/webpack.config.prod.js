@@ -23,8 +23,9 @@ module.exports = merge(baseConfig, {
       .replace(/\\/g, '/'),
   },
   
-  externals: {
-    react: 'React',
-    'react-dom': 'ReactDOM'
-  },
+  // externals: {
+  //   react: 'React',
+  //   'react-dom': 'ReactDOM',
+  //   axios: "axios"
+  // },
 })

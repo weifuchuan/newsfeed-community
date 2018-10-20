@@ -20,17 +20,16 @@ interface Props {
 @inject('store')
 @observer
 export default class Home extends React.Component<Props> {
-	@observable posts: Post[] = [];
 	@observable pageNumber = 1;
 	@observable totalPage = 1;
 	@observable loading = false;
-	container: HTMLDivElement | null = null;
+	container: HTMLDivElement | null = null; 
 
 	render() {
 		return (
-			<CommonLayout>
+			<CommonLayout containerRef={(r) => (this.container = r)}>
 				<div className={'posts'}>
-					{this.posts.map((post) => {
+					{this.props.store.posts.map((post) => {
 						return (
 							<div className="post" key={post.id}>
 								<div>
@@ -38,18 +37,18 @@ export default class Home extends React.Component<Props> {
 										<Avatar src={post.avatar} shape="square" size="large" />
 									</div>
 									<div>
-										<div onClick={() => Control.go(`/post/${post.id}`, { post })}>
+										<div onClick={() => Control.go(`/post/${post.id}` )}>
 											<span>{post.title}</span>
 										</div>
 										<div>
 											<Link to={`/user/${post.accountId}`}>{post.username}</Link>
-											<span>{moment(post.createAt).fromNow()}</span>
+											<span>{moment(post.createAt).format("YYYY-MM-DD HH:mm")}</span>
 										</div>
 									</div>
 								</div>
 								<div>
 									<div dangerouslySetInnerHTML={{ __html: post.content }} />
-									<div onClick={() => Control.go(`/post/${post.id}`, { post })} />
+									<div onClick={() => Control.go(`/post/${post.id}` )} />
 								</div>
 								<div>
 									<div>
@@ -72,7 +71,7 @@ export default class Home extends React.Component<Props> {
 									<div>
 										<Button
 											onClick={() =>
-												Control.go(`/post/${post.id}`, { post, toCommentList: true })}
+												Control.go(`/post/${post.id}`, { toCommentList: true })}
 										>
 											评论
 										</Button>
@@ -117,13 +116,18 @@ export default class Home extends React.Component<Props> {
 
 	componentDidMount() {
 		this.fetchInitDataFromServer();
+		this.props.store.onAddPost(this.refresh); 
+	} 
+
+	componentWillUnmount(){
+		this.props.store.offAddPost(this.refresh); 
 	}
 
 	private readonly fetchInitDataFromServer = async () => {
 		this.loading = true;
 		const ret = await retryDo(async () => (await POST('/home')).data, 3);
 		runInAction(() => {
-			this.posts = observable(ret.posts.map(Post.from));
+			this.props.store.posts = observable(ret.posts.map(Post.from));
 			this.pageNumber = ret.pageNumber;
 			this.totalPage = ret.totalPage;
 			this.loading = false;
@@ -134,11 +138,15 @@ export default class Home extends React.Component<Props> {
 		this.loading = true;
 		const ret = await Post.getPostsByPaginate(pageNumber);
 		runInAction(() => {
-			this.posts = observable(ret.posts);
+			this.props.store.posts = observable(ret.posts);
 			this.totalPage = ret.totalPage;
 			this.pageNumber = ret.pageNumber;
 			this.loading = false;
 		});
 		this.container && this.container.scrollTo({ top: 0 });
-	}; 
+	};
+
+	refresh = ()=>{
+		this.toPage(1); 
+	}
 }

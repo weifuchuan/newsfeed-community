@@ -20,7 +20,7 @@ export default class CommonLayout extends React.Component<Props> {
 				<div>
 					<div className={'navbar'}>
 						<div>
-							<span>随便写的社区</span>
+							<span onClick={()=>Control.go("/")} >随便写的社区</span>
 						</div>
 						<div>
 							<Popover

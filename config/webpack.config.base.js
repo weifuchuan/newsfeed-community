@@ -102,8 +102,7 @@ module.exports = {
         test: /\.css$/,
         use: [
           devMode ? 'style-loader' : MiniCssExtractPluginLoader,
-          // 'style-loader',
-          "css-loader", // translates CSS into CommonJS
+          "css-loader",
           'postcss-loader',
         ]
       },
@@ -124,6 +123,9 @@ module.exports = {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
     // @ts-ignore
     plugins: [new TsconfigPathsPlugin({ /* options: see below */ })],
+    alias: {
+      mobx: resolveApp("node_modules/mobx/lib/mobx.es6.js")
+    }
   },
 
   // plugins
@@ -165,14 +167,6 @@ module.exports = {
         ]
       })
     ]),
-    // new HappyPack({
-    //   id: "css",
-    //   threadPool: happyThreadPool,
-    //   loaders: [
-    //     'style-loader',
-    //     'css-loader', 
-    //   ]
-    // }),
     new ForkTsCheckerWebpackPlugin({
       checkSyntacticErrors: true,
       watch: resolveApp("src"),
