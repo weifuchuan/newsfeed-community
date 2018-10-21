@@ -1,5 +1,7 @@
+let baseUrl = '';
 
-/*
-  This file edit by script. 
-*/
-export default '/api';
+if (__DEV__) {
+	baseUrl = '/api';
+}
+
+export default baseUrl;

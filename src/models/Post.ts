@@ -92,12 +92,12 @@ export default class Post implements IPost {
 		}
 	}
 
-	async fetchComments() {
+	async fetchComments() { 
 		const ret: IRet = (await POST_FORM('/post/getComments', { id: this.id })).data;
 		if (ret.state === 'ok') {
 			const comments: IComment[] = ret.comments;
 			comments.sort((a, b) => (a.createAt < b.createAt ? -1 : a.createAt === b.createAt ? 0 : 1));
-			this.comments = Comment.resolve(comments);
+			this.comments = observable(Comment.resolve(comments));
 		}
 	}
 
@@ -142,7 +142,7 @@ export default class Post implements IPost {
 			delete ret.comments;
 			const post = Post.from(ret.post);
 			comments.sort((a, b) => (a.createAt < b.createAt ? -1 : a.createAt === b.createAt ? 0 : 1));
-			post.comments = Comment.resolve(comments);
+			post.comments = observable(Comment.resolve(comments));
 			return Ret.ok().set('post', post);
 		} else {
 			return Ret.fail().set('msg', ret.msg);

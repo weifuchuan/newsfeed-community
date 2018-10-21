@@ -100,11 +100,11 @@ export default class PostPage extends React.Component<Props> {
 	componentDidMount() {
 		(async () => {
 			const i = this.props.store.posts.findIndex((p) => p.id === Number.parseInt(this.props.params.id));
+			this.loading = true;
 			if (i !== -1) {
-				this.post = this.props.store.posts[i];
-				await this.post.fetchComments();
+				this.post = this.props.store.posts[i]; 
+				await this.post.fetchComments(); 
 			} else {
-				this.loading = true;
 				const ret = await Post.getPost(Number.parseInt(this.props.params.id));
 				runInAction(() => {
 					if (ret.isOk) {
@@ -112,9 +112,9 @@ export default class PostPage extends React.Component<Props> {
 					} else {
 						message.error(ret.get('msg'));
 					}
-					this.loading = false;
 				});
 			}
+			this.loading = false;
 			if (Control.state && Control.state.toCommentList)
 				this.container &&
 					this.container.scrollTo({

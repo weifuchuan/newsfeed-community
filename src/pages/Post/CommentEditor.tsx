@@ -1,11 +1,8 @@
-import React, { StyleHTMLAttributes, CSSProperties } from 'react';
-import { observer } from 'mobx-react';
-import Comment from '@/models/Comment';
-import './index.scss';
-import { observable } from 'mobx';
 import { Button, Input } from 'antd';
-
-const { TextArea } = Input;
+import { observable } from 'mobx';
+import { observer } from 'mobx-react';
+import React, { CSSProperties } from 'react';
+import './index.scss'; 
 
 @observer
 export default class CommentEditor extends React.Component<{
@@ -18,9 +15,8 @@ export default class CommentEditor extends React.Component<{
 	render() {
 		return (
 			<div className="comment-editor" style={this.props.style}>
-				<TextArea
-					placeholder="评论..."
-					autosize
+				<Input
+					placeholder="评论..."				
 					style={{ flex: 1, marginRight: '0.5em' }}
 					onChange={(e: any) => ((this.content = e.target.value), (this.editor = e.target))}
 				/>

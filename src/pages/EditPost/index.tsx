@@ -1,15 +1,14 @@
-import React, { StyleHTMLAttributes } from 'react';
-import './index.scss';
-import { observer, inject } from 'mobx-react';
-import { Store } from '@/store';
 import CommonLayout from '@/layouts/CommonLayout/index';
-import { observable } from 'mobx';
-import { Input, Button, message } from 'antd';
-import BraftEditor from 'braft-editor';
-import 'braft-editor/dist/index.css';
 import Post from '@/models/Post';
-import { IRet } from '@/models/Ret';
+import { Store } from '@/store';
+import { Button, Input, message } from 'antd';
+import 'braft-editor/dist/index.css';
+import { observable } from 'mobx';
+import { inject, observer } from 'mobx-react';
+import React, { StyleHTMLAttributes } from 'react';
 import { Control } from 'react-keeper';
+import Loadable from 'react-loadable';
+import './index.scss';
 
 interface Props {
 	store: Store;
@@ -17,6 +16,18 @@ interface Props {
 		action: 'add' | 'edit';
 	};
 }
+
+const LoadableBraftEditor = Loadable({
+	loading: () => (
+		<div
+			className="shadow"
+			style={{ padding: '1em', backgroundColor: '#fff', marginTop: '1em', borderRadius: '0.5em' }}
+		>
+			编辑器加载中...
+		</div>
+	),
+	loader: () => import('braft-editor')
+});
 
 @inject('store')
 @observer
@@ -34,7 +45,7 @@ export default class EditPost extends React.Component<Props> {
 						defaultValue={this.title}
 						onInput={(e: any) => (this.title = e.target.value)}
 					/>
-					<BraftEditor
+					<LoadableBraftEditor
 						{...{
 							className: 'shadow',
 							style: {

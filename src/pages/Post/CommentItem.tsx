@@ -7,6 +7,7 @@ import moment from 'moment';
 import { observable } from 'mobx';
 import CommentEditor from './CommentEditor';
 import { Store } from '@/store';
+import { Control } from 'react-keeper';
 moment.locale('zh-cn');
 
 @inject('store')
@@ -20,7 +21,7 @@ export default class CommentItem extends React.Component<{
 	render() {
 		return (
 			<div className={'comment'}>
-				<div>
+				<div onClick={()=>Control.go(`/user/${this.props.comment.accountId}`)} >
 					<div>
 						<Avatar src={this.props.comment.avatar} size={'small'} shape={'square'} />
 					</div>

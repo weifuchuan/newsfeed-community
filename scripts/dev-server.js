@@ -1,14 +1,6 @@
-const { resolveApp } = require('../config/kit');
-const fs = require('fs');
-
-fs.writeFileSync(resolveApp("src/kit/baseUrl.ts"), `
-/*
-  This file edit by script. 
-*/
-export default '/api';
-`)
-
 'use strict'; 
+const { resolveApp } = require('../config/kit');
+const fs = require('fs'); 
 process.env.BABEL_ENV = 'development';
 process.env.NODE_ENV = 'development'; 
 process.on('unhandledRejection', err => {
