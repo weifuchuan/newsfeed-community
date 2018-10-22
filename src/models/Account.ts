@@ -54,7 +54,7 @@ export default class Account implements IAccount {
 		const ret: IRet = (await POST_FORM('/account', form)).data;
 		if (ret.state === 'ok') {
 			const account = Account.from(ret.account);
-			ret.relation && account.relations.set(otherId!, ret.relation);
+			ret.relation !== undefined && account.relations.set(otherId!, ret.relation);
 			return account;
 		} else {
 			throw ret.msg;

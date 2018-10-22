@@ -16,10 +16,20 @@
     margin-left: 1em;
     justify-content: space-between;
 
+    >:nth-child(1){
+      
+
+      >:nth-child(2){
+        color:#312f2f; 
+        margin-left: 1em;
+      }
+    }
+
     .no-me {
       display: flex;
       align-items: center;
       // justify-content: space-between;
+
     }
 
     .is-me {

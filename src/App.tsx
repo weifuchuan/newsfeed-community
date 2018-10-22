@@ -8,7 +8,7 @@ import { retryDo, repeat } from '@/kit/funcs';
 import { POST } from '@/kit/req';
 import { IRet } from './models/Ret';
 import { Store } from './store/index';
-import Account from './models/Account'; 
+import Account from './models/Account';
 
 const Router = HashRouter;
 
@@ -28,56 +28,61 @@ class App extends React.Component<{ store?: Store }> {
 					/>
 					<Route
 						path={'/>'}
-						cache 
+						cache
 						loadComponent={(cb) => import('@/pages/Home').then((C) => cb(C.default))}
-						enterFilter={[ this.loggedFilter ]}
+						enterFilter={[ this.loggedFilter, (cb) => ((window.document.title = '首页'), cb()) ]}
 					/>
 					<Route
 						path={'/login>'}
 						loadComponent={(cb) => import('@/pages/Login').then((C) => cb(C.default))}
-						enterFilter={[ this.unloggedFilter ]}
+						enterFilter={[ this.unloggedFilter, (cb) => ((window.document.title = '登录'), cb()) ]}
 					/>
 					<Route
 						path={'/reg>'}
 						loadComponent={(cb) => import('@/pages/Reg/index').then((C) => cb(C.default))}
-						enterFilter={[ this.unloggedFilter ]}
+						enterFilter={[ this.unloggedFilter, (cb) => ((window.document.title = '注册'), cb()) ]}
 					/>
 					<Route
 						path={'/post/:id>'}
 						cache
 						loadComponent={(cb) => import('@/pages/Post').then((C) => cb(C.default))}
-						enterFilter={[ this.loggedFilter ]}
+						enterFilter={[ this.loggedFilter, (cb) => ((window.document.title = '帖子'), cb()) ]}
 					/>
 					<Route
 						path={'/edit-post/:action>'}
 						cache
 						loadComponent={(cb) => import('@/pages/EditPost').then((C) => cb(C.default))}
-						enterFilter={[ this.loggedFilter ]}
+						enterFilter={[ this.loggedFilter, (cb) => ((window.document.title = '编辑帖子'), cb()) ]}
 					/>
-					<Route					
+					<Route
 						path={'/my>'}
 						cache
 						loadComponent={(cb) => import('@/pages/My/_index').then((C) => cb(C.default))}
-						enterFilter={[ this.loggedFilter ]}
+						enterFilter={[ this.loggedFilter, (cb) => ((window.document.title = '我的主页'), cb()) ]}
 					/>
 					<Route
 						path={'/user/:id>'}
 						cache
 						loadComponent={(cb) => import('@/pages/User').then((C) => cb(C.default))}
-						enterFilter={[ this.loggedFilter ]}
+						enterFilter={[ this.loggedFilter, (cb) => ((window.document.title = '用户主页'), cb()) ]}
 					/>
 					<Route
 						path={'/message>'}
 						loadComponent={(cb) => import('@/pages/Message').then((C) => cb(C.default))}
-						enterFilter={[ this.loggedFilter ]}
+						enterFilter={[ this.loggedFilter, (cb) => ((window.document.title = '我的私信'), cb()) ]}
 					/>
-					<Route miss loadComponent={(cb) => import('@/pages/C404').then((C) => cb(C.default))} />
+					<Route
+						miss
+						loadComponent={(cb) => import('@/pages/C404').then((C) => cb(C.default))}
+						enterFilter={[ (cb) => ((window.document.title = '404'), cb()) ]}
+					/>
 				</div>
 			</Router>
 		);
 	}
 
 	componentDidMount() {
+		window.document.title = "随便写的社区";
 		(async () => {
 			this.isLogged = 0;
 			let ret: IRet;
@@ -134,7 +139,7 @@ class App extends React.Component<{ store?: Store }> {
 				if (this.isLogged === 1 || this.props.store!.me) {
 					cb();
 				} else {
-					Control.go('/login', {backUri});
+					Control.go('/login', { backUri });
 				}
 				return true;
 			}

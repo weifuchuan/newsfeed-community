@@ -21,6 +21,7 @@ export default class UserInfo extends React.Component<Props> {
 	render() {
 		const a = this.props.account;
 		let operations: React.ReactNode = null;
+		let relation: React.ReactNode = null;
 		if (a.id === this.props.store!.me!.id) {
 			operations = (
 				<div className="is-me">
@@ -36,11 +37,33 @@ export default class UserInfo extends React.Component<Props> {
 		} else {
 			operations = (
 				<div className="no-me">
-					<Button onClick={this.clickFollow}>+关注</Button>
+					<Button onClick={this.clickFollow}>
+						{a.relations.get(this.props.store!.me!.id) === Account.NO_RELATION ||
+						a.relations.get(this.props.store!.me!.id) === Account.FOLLOW ? (
+							'+关注'
+						) : (
+							'取消关注'
+						)}
+					</Button>
 					<Button type="primary" style={{ marginLeft: '0.5em' }} onClick={this.sendMessage}>
 						发私信
 					</Button>
 				</div>
+			); 
+			relation = (
+				<span>
+					{a.relations.get(this.props.store!.me!.id) === Account.NO_RELATION ? (
+						''
+					) : a.relations.get(this.props.store!.me!.id) === Account.FOLLOW ? (
+						'(我的粉丝)'
+					) : a.relations.get(this.props.store!.me!.id) === Account.FANS ? (
+						'(我关注了)'
+					) : a.relations.get(this.props.store!.me!.id) === Account.FRIEND ? (
+						'(互相关注)'
+					) : (
+						''
+					)}
+				</span>
 			);
 		}
 
@@ -52,6 +75,7 @@ export default class UserInfo extends React.Component<Props> {
 				<div>
 					<div>
 						<span style={{ fontSize: '2em' }}>{a.username}</span>
+						{relation}
 					</div>
 					{operations}
 				</div>
