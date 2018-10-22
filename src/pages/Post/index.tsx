@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { GetDerivedStateFromProps } from 'react';
 import './index.scss';
 import { observer, inject } from 'mobx-react';
 import { Store } from '@/store';
@@ -23,7 +23,10 @@ interface Props {
 
 @inject('store')
 @observer
-export default class PostPage extends React.Component<Props> {
+export default class PostPage extends React.Component<Props, { self: PostPage }> {
+	state = { self: this };
+	realMounted = false;
+
 	@observable post: Post = new Post();
 	@observable loading = false;
 	container: HTMLDivElement | null = null;
@@ -90,7 +93,7 @@ export default class PostPage extends React.Component<Props> {
 		try {
 			const comment = await Comment.add(content, this.post.id, this.props.store!.me!, new Date().getTime());
 			this.post.comments.push(comment);
-			elem.value = ''; 
+			elem.value = '';
 		} catch (e) {
 			console.error(e);
 			message.error(e);
@@ -98,28 +101,46 @@ export default class PostPage extends React.Component<Props> {
 	};
 
 	componentDidMount() {
-		(async () => {
-			const i = this.props.store.posts.findIndex((p) => p.id === Number.parseInt(this.props.params.id));
-			this.loading = true;
-			if (i !== -1) {
-				this.post = this.props.store.posts[i]; 
-				await this.post.fetchComments(); 
-			} else {
-				const ret = await Post.getPost(Number.parseInt(this.props.params.id));
-				runInAction(() => {
-					if (ret.isOk) {
-						this.post = ret.get('post');
-					} else {
-						message.error(ret.get('msg'));
-					}
-				});
-			}
-			this.loading = false;
-			if (Control.state && Control.state.toCommentList)
-				this.container &&
-					this.container.scrollTo({
-						top: this.commentsDiv!.getClientRects().item(0)!.top
-					});
-		})();
+		this.fetchPost(Number.parseInt(this.props.params.id));
 	}
+
+	private async fetchPost(id: number) {
+		this.loading = true;
+		const i = this.props.store.posts.findIndex((p) => p.id === id);
+		if (i !== -1) {
+			this.post = this.props.store.posts[i];
+			await this.post.fetchComments();
+		} else {
+			const ret = await Post.getPost(id);
+			runInAction(() => {
+				if (ret.isOk) {
+					this.post = ret.get('post');
+				} else {
+					message.error(ret.get('msg'));
+				}
+			});
+		}
+		this.loading = false;
+		this.realMounted = true;
+		if (Control.state && Control.state.toCommentList)
+			this.container &&
+				this.container.scrollTo({
+					top: this.commentsDiv!.getClientRects().item(0)!.top
+				});
+	}
+
+	componentWillUnmount() {
+		this.realMounted = false;
+	}
+
+	static getDerivedStateFromProps: GetDerivedStateFromProps<any, any> = (nextProps: any, state: any) => {
+		if (nextProps.params.id) {
+			const nextId = Number.parseInt(nextProps.params.id);
+			if (state.self.realMounted && nextId !== state.self.post.id) {
+				state.self.realMounted = false;
+				state.self.fetchPost(nextId);
+			}
+		}
+		return null;
+	};
 }

@@ -8,8 +8,7 @@ import { retryDo, repeat } from '@/kit/funcs';
 import { POST } from '@/kit/req';
 import { IRet } from './models/Ret';
 import { Store } from './store/index';
-import Account from './models/Account';
-import Ret from './models/Ret';
+import Account from './models/Account'; 
 
 const Router = HashRouter;
 
@@ -45,21 +44,25 @@ class App extends React.Component<{ store?: Store }> {
 					/>
 					<Route
 						path={'/post/:id>'}
+						cache
 						loadComponent={(cb) => import('@/pages/Post').then((C) => cb(C.default))}
 						enterFilter={[ this.loggedFilter ]}
 					/>
 					<Route
 						path={'/edit-post/:action>'}
+						cache
 						loadComponent={(cb) => import('@/pages/EditPost').then((C) => cb(C.default))}
 						enterFilter={[ this.loggedFilter ]}
 					/>
-					<Route
+					<Route					
 						path={'/my>'}
-						loadComponent={(cb) => import('@/pages/My').then((C) => cb(C.default))}
+						cache
+						loadComponent={(cb) => import('@/pages/My/_index').then((C) => cb(C.default))}
 						enterFilter={[ this.loggedFilter ]}
 					/>
 					<Route
 						path={'/user/:id>'}
+						cache
 						loadComponent={(cb) => import('@/pages/User').then((C) => cb(C.default))}
 						enterFilter={[ this.loggedFilter ]}
 					/>

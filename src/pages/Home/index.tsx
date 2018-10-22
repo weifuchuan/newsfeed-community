@@ -8,9 +8,8 @@ import React from 'react';
 import './index.scss';
 import { Avatar, Button, Popover, Icon, Pagination, Spin } from 'antd';
 import { Control, Link } from 'react-keeper';
-import moment from 'moment';
 import CommonLayout from '@/layouts/CommonLayout';
-
+import moment from 'moment';
 moment.locale('zh-cn');
 
 interface Props {
@@ -23,7 +22,7 @@ export default class Home extends React.Component<Props> {
 	@observable pageNumber = 1;
 	@observable totalPage = 1;
 	@observable loading = false;
-	container: HTMLDivElement | null = null; 
+	container: HTMLDivElement | null = null;
 
 	render() {
 		return (
@@ -33,22 +32,38 @@ export default class Home extends React.Component<Props> {
 						return (
 							<div className="post" key={post.id}>
 								<div>
-									<div className="avatar" onClick={() => Control.go(`/user/${post.accountId}`)}>
+									<div
+										className="avatar"
+										onClick={() =>
+											post.accountId === this.props.store.me!.id
+												? Control.go('/my')
+												: Control.go(`/user/${post.accountId}`)}
+									>
 										<Avatar src={post.avatar} shape="square" size="large" />
 									</div>
 									<div>
-										<div onClick={() => Control.go(`/post/${post.id}` )}>
+										<div onClick={() => Control.go(`/post/${post.id}`)}>
 											<span>{post.title}</span>
 										</div>
 										<div>
-											<Link to={`/user/${post.accountId}`}>{post.username}</Link>
-											<span>{moment(post.createAt).format("YYYY-MM-DD HH:mm")}</span>
+											<Link
+												to={
+													post.accountId === this.props.store.me!.id ? (
+														'/my'
+													) : (
+														`/user/${post.accountId}`
+													)
+												}
+											>
+												{post.username}
+											</Link>
+											<span>{moment(post.createAt).format('YYYY-MM-DD HH:mm')}</span>
 										</div>
 									</div>
 								</div>
 								<div>
 									<div dangerouslySetInnerHTML={{ __html: post.content }} />
-									<div onClick={() => Control.go(`/post/${post.id}` )} />
+									<div onClick={() => Control.go(`/post/${post.id}`)} />
 								</div>
 								<div>
 									<div>
@@ -69,10 +84,7 @@ export default class Home extends React.Component<Props> {
 										/>
 									</div>
 									<div>
-										<Button
-											onClick={() =>
-												Control.go(`/post/${post.id}`, { toCommentList: true })}
-										>
+										<Button onClick={() => Control.go(`/post/${post.id}`, { toCommentList: true })}>
 											评论
 										</Button>
 									</div>
@@ -116,11 +128,11 @@ export default class Home extends React.Component<Props> {
 
 	componentDidMount() {
 		this.fetchInitDataFromServer();
-		this.props.store.onAddPost(this.refresh); 
-	} 
+		this.props.store.onAddPost(this.refresh);
+	}
 
-	componentWillUnmount(){
-		this.props.store.offAddPost(this.refresh); 
+	componentWillUnmount() {
+		this.props.store.offAddPost(this.refresh);
 	}
 
 	private readonly fetchInitDataFromServer = async () => {
@@ -146,7 +158,7 @@ export default class Home extends React.Component<Props> {
 		this.container && this.container.scrollTo({ top: 0 });
 	};
 
-	refresh = ()=>{
-		this.toPage(1); 
-	}
+	refresh = () => {
+		this.toPage(1);
+	};
 }
