@@ -18,6 +18,16 @@ export class Store extends EventEmitter {
 	offAddPost(handler: Function) {
 		this.off('addPost', handler);
 	}
+
+	emitUpdateMyNewsfeed() {
+		this.emit('UpdateMyNewsfeed');
+	}
+	onUpdateMyNewsfeed(handler: Function) {
+		this.on('UpdateMyNewsfeed', handler);
+	}
+	offUpdateMyNewsfeed(handler: Function) {
+		this.off('UpdateMyNewsfeed', handler);
+	}
 }
 
 const store = new Store();

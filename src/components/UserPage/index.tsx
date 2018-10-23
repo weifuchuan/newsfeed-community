@@ -5,11 +5,10 @@ import { Store } from '@/store';
 import CommonLayout from '@/layouts/CommonLayout';
 import { observable, runInAction, toJS, autorun, IReactionDisposer } from 'mobx';
 import Newsfeed from '@/models/Newsfeed';
-import { Spin, Pagination } from 'antd';
+import { Spin, Pagination, Button } from 'antd';
 import NewsfeedItem from '@/components/NewsfeedItem';
 import UserInfo from '@/components/UserInfo';
 import Account from '@/models/Account';
-import { repeat } from '../../kit/funcs';
 
 interface Props {
 	store?: Store;
@@ -48,14 +47,19 @@ export default class UserPage extends React.Component<Props> {
 				{this.newsfeeds.map((ns) => {
 					return <NewsfeedItem newsfeed={ns} key={ns.id} />;
 				})}
-				<Pagination
-					showQuickJumper
-					current={this.pageNumber}
-					pageSize={1}
-					total={this.totalPage}
-					onChange={this.toPage}
-				/>
+				{this.totalPage < 2 ? null : (
+					<Pagination
+						showQuickJumper
+						current={this.pageNumber}
+						pageSize={1}
+						total={this.totalPage}
+						onChange={this.toPage}
+					/>
+				)}
 				<Spin size="large" spinning={this.loading} style={{ position: 'fixed', left: '50vw', top: '50vh' }} />
+				<div className={'operationBtns'}>
+					<Button type="primary" shape="circle" icon="reload" size={'large'} onClick={() => this.toPage(1)} />
+				</div>
 			</CommonLayout>
 		);
 	}
@@ -83,9 +87,15 @@ export default class UserPage extends React.Component<Props> {
 				}
 			})
 		);
+		this.props.store!.onUpdateMyNewsfeed(this.refresh);
 	}
+
+	refresh = () => {
+		this.toPage(1);
+	};
 
 	componentWillUnmount() {
 		this.closes.forEach((c) => c());
+		this.props.store!.offUpdateMyNewsfeed(this.refresh);
 	}
 }

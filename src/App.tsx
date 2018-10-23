@@ -57,7 +57,7 @@ class App extends React.Component<{ store?: Store }> {
 					<Route
 						path={'/my>'}
 						cache
-						loadComponent={(cb) => import('@/pages/My/_index').then((C) => cb(C.default))}
+						loadComponent={(cb) => import('@/pages/My').then((C) => cb(C.default))}
 						enterFilter={[ this.loggedFilter, (cb) => ((window.document.title = '我的主页'), cb()) ]}
 					/>
 					<Route
@@ -70,6 +70,11 @@ class App extends React.Component<{ store?: Store }> {
 						path={'/message>'}
 						loadComponent={(cb) => import('@/pages/Message').then((C) => cb(C.default))}
 						enterFilter={[ this.loggedFilter, (cb) => ((window.document.title = '我的私信'), cb()) ]}
+					/>
+					<Route
+						path={'/send-message/:id>'}
+						loadComponent={(cb) => import('@/pages/SendMessage').then((C) => cb(C.default))}
+						enterFilter={[ this.loggedFilter, (cb) => ((window.document.title = '发送私信'), cb()) ]}
 					/>
 					<Route
 						miss

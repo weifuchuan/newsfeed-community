@@ -1,4 +1,9 @@
-.MyContainer{
 
+.operationBtns {
+  position: fixed;
+  right: 2em;
+  bottom: 2em;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
 }
-  

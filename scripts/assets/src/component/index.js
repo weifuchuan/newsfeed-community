@@ -1,20 +1,21 @@
-import React from 'react';
+// @ts-ignore
+module.exports = (compName) => `import React from 'react';
 import "./index.scss"; 
 import { observer, inject } from 'mobx-react';
 import { Store } from '@/store';
 
 interface Props {
-  store: Store; 
+  store?: Store; 
 }
 
 @inject("store")
 @observer
-export default class MessagePage extends React.Component<Props> {
+export default class ${compName} extends React.Component<Props> {
   render(){
     return (
-      <div className="MessageContainer" >
+      <div className="${compName}Container" >
       
       </div>
     )
   }
-}
+}`;

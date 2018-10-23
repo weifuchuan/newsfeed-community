@@ -93,13 +93,15 @@ export default class Home extends React.Component<Props> {
 						);
 					})}
 				</div>
-				<Pagination
-					showQuickJumper
-					current={this.pageNumber}
-					pageSize={1}
-					total={this.totalPage}
-					onChange={this.toPage}
-				/>
+				{this.totalPage < 2 ? null : (
+					<Pagination
+						showQuickJumper
+						current={this.pageNumber}
+						pageSize={1}
+						total={this.totalPage}
+						onChange={this.toPage}
+					/>
+				)} 
 				<div className={'operationBtns'}>
 					<Button
 						type="primary"

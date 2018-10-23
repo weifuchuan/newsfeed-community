@@ -10,17 +10,79 @@ export interface IAccount {
 }
 
 export default class Account implements IAccount {
+	// 关系 relation
+	static readonly NO_RELATION = 0; // 互相不关注
+	static readonly FANS = 1; // 粉丝
+	static readonly FOLLOW = 2; // 关注
+	static readonly FRIEND = 3; // 互相关注
+
 	@observable id: number = 0;
 	@observable username: string = '';
 	@observable password?: string | undefined;
 	@observable avatar: string = '';
-	relations = new Map<number /* otherId */, number /* relation */>();
+	@observable relations = new Map<number /* otherId */, number /* relation */>();
 
-	// 关系 relation
-	static NO_RELATION = 0; // 互相不关注
-	static FANS = 1; // 粉丝
-	static FOLLOW = 2; // 关注
-	static FRIEND = 3; // 互相关注
+	async changeAvatar(avatar: string) {
+		const ret: IRet = (await POST_FORM('/account/changeAvatar', { avatar })).data;
+		if (ret.state === 'ok') {
+			this.avatar = avatar;
+		} else {
+			throw '更新失败';
+		}
+	}
+
+	async changeUsername(username: string) {
+		const ret: IRet = (await POST_FORM('/account/changeUsername', { username })).data;
+		if (ret.state === 'ok') {
+			this.username = username;
+		} else {
+			throw '更新失败';
+		}
+	}
+
+	async changePassword(newPassword: string, oldPassword: string) {
+		const ret: IRet = (await POST_FORM('/account/changePassword', { newPassword, oldPassword })).data;
+		if (ret.state === 'ok') {
+		} else {
+			throw '更新失败';
+		}
+	}
+
+	async follow(toId: number) {
+		const ret: IRet = (await POST_FORM('/account/follow', { toId })).data;
+		if (ret.state === 'ok') {
+			let relation = Account.FOLLOW;
+			if (this.relations.get(toId)) {
+				const oldRelation = this.relations.get(toId)!;
+				switch (oldRelation) {
+					case Account.FANS:
+						relation = Account.FRIEND;
+						break;
+				}
+			}
+			this.relations.set(toId, relation);
+		} else {
+			throw '更新失败';
+		}
+	}
+
+	async unfollow(toId: number) {
+		const ret: IRet = (await POST_FORM('/account/unfollow', { toId })).data;
+		if (ret.state === 'ok') {
+			let relation = Account.NO_RELATION;
+			if (this.relations.get(toId)) {
+				const oldRelation = this.relations.get(toId)!;
+				switch (oldRelation) {
+					case Account.FRIEND:
+						relation = Account.FANS;
+						break;
+				}
+			}
+			this.relations.set(toId, relation);
+		} else {
+			throw '更新失败';
+		}
+	}
 
 	static from(account: IAccount): Account {
 		const acc = new Account();
