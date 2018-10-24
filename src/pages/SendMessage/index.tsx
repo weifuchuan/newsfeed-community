@@ -7,6 +7,9 @@ import { observable, runInAction } from 'mobx';
 import { inject, observer } from 'mobx-react';
 import React from 'react';
 import './index.scss';
+import moment from 'moment';
+
+moment.locale('zh-cn');
 
 interface Props {
 	store: Store;
@@ -25,10 +28,11 @@ export default class SendMessage extends React.Component<Props> {
 	@observable totalPage = 1;
 
 	editor: HTMLDivElement | null = null;
+	container: HTMLDivElement | null = null;
 
 	render() {
 		return (
-			<CommonLayout>
+			<CommonLayout containerRef={(r) => (this.container = r)}>
 				<div className="SendMessageContainer">
 					<h3 style={{ fontSize: '1.5em', textAlign: 'center', verticalAlign: 'center' }}>
 						与&nbsp;<Avatar size={'default'} src={this.account.avatar} shape="square" />
@@ -45,7 +49,47 @@ export default class SendMessage extends React.Component<Props> {
 							发送
 						</Button>
 					</div>
-					<div />
+					<div style={{ borderTop: 'solid #aaa 1px', margin: '1em 0' }} />
+					<div>
+						{this.messages.map((msg, i) => {
+							return (
+								<React.Fragment key={i}>
+									<div className="item">
+										<div>
+											{msg.fromId === this.props.store.me!.id ? (
+												<div>
+													<Avatar
+														size={'default'}
+														src={this.props.store.me!.avatar}
+														shape="square"
+													/>
+													<span style={{ fontWeight: 'bold', fontSize: '1.2em' }}>
+														{this.props.store.me!.username}
+													</span>
+												</div>
+											) : (
+												<div>
+													<Avatar size={'default'} src={this.account.avatar} shape="square" />
+													<span style={{ fontWeight: 'bold', fontSize: '1.2em' }}>
+														{this.account.username}
+													</span>
+												</div>
+											)}
+											<span>{moment(msg.createAt).format('YYYY-MM-DD HH:mm')}</span>
+										</div>
+										<div
+											style={{ fontSize: '1.5em' }}
+											dangerouslySetInnerHTML={{ __html: msg.content }}
+										/>
+									</div>
+									{i === this.messages.length - 1 ? null : (
+										<div style={{ borderTop: 'solid #aaa 1px', margin: '1em 0' }} />
+									)}
+								</React.Fragment>
+							);
+						})}
+					</div>
+					<div style={{ borderTop: 'solid #aaa 1px', margin: '1em 0' }} />
 					{this.totalPage < 2 ? null : (
 						<Pagination
 							showQuickJumper
@@ -69,7 +113,27 @@ export default class SendMessage extends React.Component<Props> {
 	}
 
 	send = async () => {
-		console.log(this.editor!.innerHTML);
+		const content = this.editor!.innerHTML;
+		if (content.trim() === '') {
+			return;
+		}
+		this.loading = true;
+		const createAt = new Date().getTime();
+		const ret = await Message.send(this.account.id, content, createAt);
+		if (ret.isOk) {
+			const msg = new Message();
+			msg.id = ret.get('id');
+			msg.content = content;
+			msg.fromId = this.props.store.me!.id;
+			msg.toId = this.account.id;
+			msg.createAt = createAt;
+			this.messages.unshift(msg);
+			this.editor!.innerHTML = '';
+			message.success('发送成功');
+		} else {
+			message.error('发送失败');
+		}
+		this.loading = false;
 	};
 
 	toPage = async (p: number) => {
@@ -81,6 +145,7 @@ export default class SendMessage extends React.Component<Props> {
 			this.totalPage = totalPage;
 			this.loading = false;
 		});
+		this.container!.scrollTo({ top: 0 });
 	};
 
 	componentDidMount() {

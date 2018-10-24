@@ -25,12 +25,14 @@ export default class UserInfo extends React.Component<Props> {
 			operations = (
 				<div className="is-me">
 					<Button onClick={this.changeAvatar}>修改头像</Button>
-					<Button style={{ marginLeft: '0.5em' }} onClick={this.changeUsername}>
-						修改昵称
-					</Button>
-					<Button style={{ marginLeft: '0.5em' }} onClick={this.changePassword}>
-						修改密码
-					</Button>
+					<div style={{ width: '0.5em' }} />
+					<Button onClick={this.changeUsername}>修改昵称</Button>
+					<div style={{ width: '0.5em' }} />
+					<Button onClick={this.changePassword}>修改密码</Button>
+					<div style={{ width: '0.5em' }} />
+					<Button onClick={this.openFollowList}>我的关注</Button>
+					<div style={{ width: '0.5em' }} />
+					<Button onClick={this.openFansList}>我的粉丝</Button>
 				</div>
 			);
 		} else {
@@ -44,8 +46,17 @@ export default class UserInfo extends React.Component<Props> {
 							'取消关注'
 						)}
 					</Button>
-					<Button type="primary" style={{ marginLeft: '0.5em' }} onClick={this.sendMessage}>
+					<div style={{ width: '0.5em' }} />
+					<Button type="primary" onClick={this.sendMessage}>
 						发私信
+					</Button>
+					<div style={{ width: '0.5em' }} />
+					<Button onClick={this.openFollowList}>
+						<b>{a.username}</b>的关注
+					</Button>
+					<div style={{ width: '0.5em' }} />
+					<Button onClick={this.openFansList}>
+						<b>{a.username}</b>的粉丝
 					</Button>
 				</div>
 			);
@@ -309,4 +320,6 @@ export default class UserInfo extends React.Component<Props> {
 	sendMessage = () => {
 		Control.go(`/send-message/${this.props.account.id}`);
 	};
+	openFollowList = () => {};
+	openFansList = () => {};
 }

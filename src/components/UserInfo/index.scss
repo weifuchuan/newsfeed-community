@@ -16,11 +16,11 @@
     margin-left: 1em;
     justify-content: space-between;
 
-    >:nth-child(1){
-      
+    >:nth-child(1) {
 
-      >:nth-child(2){
-        color:#312f2f; 
+
+      >:nth-child(2) {
+        color: #312f2f;
         margin-left: 1em;
       }
     }
@@ -28,14 +28,21 @@
     .no-me {
       display: flex;
       align-items: center;
-      // justify-content: space-between;
-
+      flex-wrap: wrap;
+ 
+      >button {
+        margin-top: 0.5em;
+      }
     }
 
     .is-me {
       display: flex;
       align-items: center;
-      // justify-content: space-around;
+      flex-wrap: wrap;
+ 
+      >button {
+        margin-top: 0.5em;
+      }
     }
   }
 }

@@ -3,12 +3,14 @@ import './App.scss';
 import { HashRouter, Route, Filter, Control } from 'react-keeper';
 import { Spin, message } from 'antd';
 import { inject, observer } from 'mobx-react';
-import { observable } from 'mobx';
+import { observable, computed } from 'mobx';
 import { retryDo, repeat } from '@/kit/funcs';
 import { POST } from '@/kit/req';
-import { IRet } from './models/Ret';
-import { Store } from './store/index';
-import Account from './models/Account';
+import { IRet } from '@/models/Ret';
+import { Store } from '@/store/index';
+import Account from '@/models/Account';
+import Remind from '@/models/Remind';
+import RemindBox from './components/RemindBox';
 
 const Router = HashRouter;
 
@@ -21,11 +23,6 @@ class App extends React.Component<{ store?: Store }> {
 		return (
 			<Router>
 				<div className={'container'}>
-					<Spin
-						size="large"
-						spinning={this.isLogged === 0}
-						style={{ position: 'fixed', left: '50vw', top: '50vh' }}
-					/>
 					<Route
 						path={'/>'}
 						cache
@@ -81,13 +78,19 @@ class App extends React.Component<{ store?: Store }> {
 						loadComponent={(cb) => import('@/pages/C404').then((C) => cb(C.default))}
 						enterFilter={[ (cb) => ((window.document.title = '404'), cb()) ]}
 					/>
+					<Spin
+						size="large"
+						spinning={this.isLogged === 0}
+						style={{ position: 'fixed', left: '50vw', top: '50vh' }}
+					/>
+					{this.isLogged === 1 ? <RemindBox /> : null}
 				</div>
 			</Router>
 		);
 	}
 
 	componentDidMount() {
-		window.document.title = "随便写的社区";
+		window.document.title = '随便写的社区';
 		(async () => {
 			this.isLogged = 0;
 			let ret: IRet;

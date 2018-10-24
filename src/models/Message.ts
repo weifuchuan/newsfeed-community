@@ -1,5 +1,5 @@
 import { observable } from 'mobx';
-import { IRet } from './Ret';
+import Ret, { IRet } from './Ret';
 import { POST_FORM } from '@/kit/req';
 
 export interface IMessage {
@@ -39,5 +39,14 @@ export default class Message implements IMessage {
 			totalPage: ret.totalPage,
 			pageNumber: ret.pageNumber
 		};
+	}
+
+	static async send(toId: number, content: string, createAt: number): Promise<Ret> {
+		const ret: IRet = (await POST_FORM('/message/send', { toId, content, createAt })).data;
+		if (ret.state === 'ok') {
+			return Ret.ok().set('id', ret.id);
+		} else {
+			return Ret.fail().set('msg', '发送失败');
+		}
 	}
 }

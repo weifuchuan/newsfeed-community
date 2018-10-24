@@ -1,17 +1,16 @@
-import React, { GetDerivedStateFromProps } from 'react';
-import './index.scss';
-import { observer, inject } from 'mobx-react';
-import { Store } from '@/store';
-import { observable, runInAction } from 'mobx';
 import CommonLayout from '@/layouts/CommonLayout';
-import { Button, Icon, Avatar, Spin, message, Input } from 'antd';
-import { Link, Control } from 'react-keeper';
-import moment from 'moment';
-import Post from '@/models/Post';
 import Comment from '@/models/Comment';
+import Post from '@/models/Post';
+import { Store } from '@/store';
+import { Avatar, Icon, Input, message, Spin } from 'antd';
+import { observable, runInAction } from 'mobx';
+import { inject, observer } from 'mobx-react';
+import moment from 'moment';
+import React, { GetDerivedStateFromProps } from 'react';
+import { Control, Link } from 'react-keeper';
 import CommentEditor from './CommentEditor';
 import CommentItem from './CommentItem';
-const { TextArea } = Input;
+import './index.scss'; 
 moment.locale('zh-cn');
 
 interface Props {
