@@ -1,6 +1,6 @@
 import { observable } from 'mobx';
 import Ret, { IRet } from './Ret';
-import { POST_FORM } from '@/kit/req';
+import { POST_FORM, POST, GET } from '@/kit/req';
 
 export interface IMessage {
 	id: number;
@@ -8,6 +8,8 @@ export interface IMessage {
 	fromId: number;
 	toId: number;
 	createAt: number;
+	username?: string;
+	avatar?: string;
 }
 
 export default class Message implements IMessage {
@@ -16,6 +18,8 @@ export default class Message implements IMessage {
 	@observable fromId: number = 0;
 	@observable toId: number = 0;
 	@observable createAt: number = 0;
+	@observable username?: string;
+	@observable avatar?: string;
 
 	static from(newsfeed: IMessage): Message {
 		const ns = new Message();
@@ -47,6 +51,15 @@ export default class Message implements IMessage {
 			return Ret.ok().set('id', ret.id);
 		} else {
 			return Ret.fail().set('msg', '发送失败');
+		}
+	}
+
+	static async list(): Promise<Ret> {
+		const ret: IRet = (await GET('/message/list')).data;
+		if (ret.state === 'ok') {
+			return Ret.ok().set('list', ret.list.map(Message.from));
+		} else {
+			throw 'error';
 		}
 	}
 }

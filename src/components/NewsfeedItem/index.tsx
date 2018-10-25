@@ -47,7 +47,7 @@ export default class NewsfeedItem extends React.Component<Props> {
 						onClick={() => Control.go(`/user/${ns.refId}`)}
 					>
 						<Avatar src={ns.toAvatar!} size={'small'} shape={'square'} />
-						<span>{ns.toUsername!}</span>
+						<span style={{marginLeft:"0.5em"}} >{ns.toUsername!}</span>
 					</div>
 				);
 				break;

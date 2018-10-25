@@ -9,6 +9,13 @@ export interface IAccount {
 	avatar: string;
 }
 
+export interface IFollowAccount {
+	id: number;
+	username: string;
+	avatar: string;
+	createAt: number;
+}
+
 export default class Account implements IAccount {
 	// 关系 relation
 	static readonly NO_RELATION = 0; // 互相不关注
@@ -81,6 +88,24 @@ export default class Account implements IAccount {
 			this.relations.set(toId, relation);
 		} else {
 			throw '更新失败';
+		}
+	}
+
+	async followList(): Promise<IFollowAccount[]> {
+		const ret: IRet = (await POST_FORM('/account/followList', { id: this.id })).data;
+		if (ret.state === 'ok') {
+			return observable(ret.list);
+		} else {
+			throw 'error';
+		}
+	}
+
+	async fansList(): Promise<IFollowAccount[]> {
+		const ret: IRet = (await POST_FORM('/account/fansList', { id: this.id })).data;
+		if (ret.state === 'ok') {
+			return observable(ret.list);
+		} else {
+			throw 'error';
 		}
 	}
 

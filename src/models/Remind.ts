@@ -1,4 +1,5 @@
-import { observable } from 'mobx';
+import { observable, action } from 'mobx';
+import { POST, GET, POST_FORM } from '@/kit/req';
 
 export interface IRemind {
 	// accountId:number;
@@ -19,10 +20,38 @@ export default class Remind implements IRemind {
 	@observable like: number = 0;
 	@observable nay: number = 0;
 
+	async fetch() {
+		const remind: IRemind = (await GET('/remind')).data;
+		this.merge(remind);
+	}
+
+	@action
+	merge(remind: IRemind) {
+		for (let key in remind) {
+			this[key] = remind[key];
+		}
+	}
+
+	@action
+	clear = async()=> {
+		this.referMe = 0;
+		this.message = 0;
+		this.fans = 0;
+		this.comment = 0;
+		this.like = 0;
+		this.nay = 0;
+		await GET('/remind/clear');
+	}
+
+	async del(type: keyof IRemind) {
+		this[type] = 0;
+		await POST_FORM('/remind/delete', { type });
+	}
+
 	static from(remind: IRemind): Remind {
 		const r = new Remind();
 		for (let key in remind) {
-			r[key] = remind[key];
+			r[key] = typeof remind[key] === 'number' ? remind[key] : 0;
 		}
 		return r;
 	}

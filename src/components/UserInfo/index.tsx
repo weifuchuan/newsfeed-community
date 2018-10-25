@@ -1,12 +1,13 @@
 import Account from '@/models/Account';
 import { Store } from '@/store';
-import { Avatar, Button, message, Input } from 'antd';
+import { Avatar, Button, message, Input, Spin } from 'antd';
 import { inject, observer } from 'mobx-react';
 import moment from 'moment';
 import React from 'react';
 import Modal from '../Modal/index';
 import './index.scss';
 import { Control } from 'react-keeper';
+import { IFollowAccount } from '../../models/Account';
 moment.locale('zh-cn');
 
 interface Props {
@@ -30,9 +31,9 @@ export default class UserInfo extends React.Component<Props> {
 					<div style={{ width: '0.5em' }} />
 					<Button onClick={this.changePassword}>修改密码</Button>
 					<div style={{ width: '0.5em' }} />
-					<Button onClick={this.openFollowList}>我的关注</Button>
+					<Button onClick={this.openFollowOrFansList('follow')}>我的关注</Button>
 					<div style={{ width: '0.5em' }} />
-					<Button onClick={this.openFansList}>我的粉丝</Button>
+					<Button onClick={this.openFollowOrFansList('fans')}>我的粉丝</Button>
 				</div>
 			);
 		} else {
@@ -51,11 +52,11 @@ export default class UserInfo extends React.Component<Props> {
 						发私信
 					</Button>
 					<div style={{ width: '0.5em' }} />
-					<Button onClick={this.openFollowList}>
+					<Button onClick={this.openFollowOrFansList('follow')}>
 						<b>{a.username}</b>的关注
 					</Button>
 					<div style={{ width: '0.5em' }} />
-					<Button onClick={this.openFansList}>
+					<Button onClick={this.openFollowOrFansList('fans')}>
 						<b>{a.username}</b>的粉丝
 					</Button>
 				</div>
@@ -233,57 +234,55 @@ export default class UserInfo extends React.Component<Props> {
 		const me = this.props.store!.me!;
 		const store = this.props.store!;
 
-		const ModalPanel = observer(
-			class extends React.Component {
-				state = { newPassword: '', oldPassword: '', loading: false };
+		const ModalPanel = class extends React.Component {
+			state = { newPassword: '', oldPassword: '', loading: false };
 
-				render() {
-					return (
-						<div
-							style={{
-								width: '100%',
-								height: '100%',
-								display: 'flex',
-								flexDirection: 'column',
-								padding: '1em',
-								alignItems: 'center',
-								justifyContent: 'center'
+			render() {
+				return (
+					<div
+						style={{
+							width: '100%',
+							height: '100%',
+							display: 'flex',
+							flexDirection: 'column',
+							padding: '1em',
+							alignItems: 'center',
+							justifyContent: 'center'
+						}}
+					>
+						<Input
+							value={this.state.oldPassword}
+							placeholder={'原密码'}
+							onChange={(e: any) => this.setState({ oldPassword: e.target.value.trim() })}
+						/>
+						<Input
+							value={this.state.newPassword}
+							style={{ marginTop: '1em' }}
+							placeholder={'新密码'}
+							onChange={(e: any) => this.setState({ newPassword: e.target.value.trim() })}
+						/>
+						<Button
+							type="primary"
+							style={{ marginTop: '1em' }}
+							disabled={this.state.oldPassword.trim() === '' || this.state.oldPassword.trim() === ''}
+							onClick={async () => {
+								this.setState({ loading: true });
+								try {
+									await me.changePassword(this.state.newPassword, this.state.oldPassword);
+									close();
+								} catch (e) {
+									message.error('更新失败');
+								}
+								this.setState({ loading: false });
 							}}
+							loading={this.state.loading}
 						>
-							<Input
-								value={this.state.oldPassword}
-								placeholder={'原密码'}
-								onChange={(e: any) => this.setState({ oldPassword: e.target.value.trim() })}
-							/>
-							<Input
-								value={this.state.newPassword}
-								style={{ marginTop: '1em' }}
-								placeholder={'新密码'}
-								onChange={(e: any) => this.setState({ newPassword: e.target.value.trim() })}
-							/>
-							<Button
-								type="primary"
-								style={{ marginTop: '1em' }}
-								disabled={this.state.oldPassword.trim() === '' || this.state.oldPassword.trim() === ''}
-								onClick={async () => {
-									this.setState({ loading: true });
-									try {
-										await me.changePassword(this.state.newPassword, this.state.oldPassword);
-										close();
-									} catch (e) {
-										message.error('更新失败');
-									}
-									this.setState({ loading: false });
-								}}
-								loading={this.state.loading}
-							>
-								更新密码
-							</Button>
-						</div>
-					);
-				}
+							更新密码
+						</Button>
+					</div>
+				);
 			}
-		);
+		};
 
 		const close = Modal.show(<ModalPanel />, '70vw', '80vh');
 	};
@@ -320,6 +319,62 @@ export default class UserInfo extends React.Component<Props> {
 	sendMessage = () => {
 		Control.go(`/send-message/${this.props.account.id}`);
 	};
-	openFollowList = () => {};
-	openFansList = () => {};
+	openFollowOrFansList = (type: 'follow' | 'fans') => () => {
+		const account = this.props.account;
+
+		const ModalPanel = class extends React.Component {
+			state = {
+				list: [] as IFollowAccount[],
+				loading: false
+			};
+
+			render() {
+				return (
+					<div
+						style={{
+							width: '100%',
+							height: '100%',
+							display: 'flex',
+							flexDirection: 'column',
+							padding: '2em',
+							alignItems: 'center',
+							justifyContent: 'center',
+							overflow: 'auto',
+							position: 'relative'
+						}}
+					>
+						{this.state.list.map((acc) => {
+							return (
+								<div
+									className={'follow-account-in-modal'}
+									key={acc.id}
+									onClick={() => (Control.go(`/user/${acc.id}`), close())}
+								>
+									<div>
+										<Avatar src={acc.avatar} shape="square" />
+										<span style={{ fontWeight: 'bold', marginLeft: '1em' }}>{acc.username}</span>
+									</div>
+									<span>{moment(acc.createAt).format('YYYY-MM-DD HH:mm')}</span>
+								</div>
+							);
+						})}
+						<Spin spinning={this.state.loading} style={{ position: 'absolute', left: '48%', top: '48%' }} />
+					</div>
+				);
+			}
+
+			async componentDidMount() {
+				this.setState({ loading: true });
+				let list;
+				if (type === 'fans') {
+					list = await account.fansList();
+				} else {
+					list = await account.followList();
+				}
+				this.setState({ list, loading: false });
+			}
+		};
+
+		const close = Modal.show(<ModalPanel />, '70vw', '80vh');
+	};
 }

@@ -8,8 +8,7 @@ import { retryDo, repeat } from '@/kit/funcs';
 import { POST } from '@/kit/req';
 import { IRet } from '@/models/Ret';
 import { Store } from '@/store/index';
-import Account from '@/models/Account';
-import Remind from '@/models/Remind';
+import Account from '@/models/Account'; 
 import RemindBox from './components/RemindBox';
 
 const Router = HashRouter;
@@ -65,6 +64,7 @@ class App extends React.Component<{ store?: Store }> {
 					/>
 					<Route
 						path={'/message>'}
+						cache
 						loadComponent={(cb) => import('@/pages/Message').then((C) => cb(C.default))}
 						enterFilter={[ this.loggedFilter, (cb) => ((window.document.title = '我的私信'), cb()) ]}
 					/>
@@ -90,6 +90,10 @@ class App extends React.Component<{ store?: Store }> {
 	}
 
 	componentDidMount() {
+		const elem=window.document.getElementById("loading"); 
+		if(elem){
+			elem.parentElement!.removeChild(elem); 
+		}
 		window.document.title = '随便写的社区';
 		(async () => {
 			this.isLogged = 0;
